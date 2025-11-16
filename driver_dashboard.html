@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="/home/karthik/logo.png">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- NAVBAR -->
+    <div class="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow">
+        <h1 class="text-xl font-semibold">TCCS – Driver Dashboard</h1>
+        <div class="flex items-center gap-4">
+            <span class="font-medium">Hello, {{ user.username }} 👋</span>
+            <a href="{{ url_for('logout') }}"
+               class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-sm">Logout</a>
+        </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto p-6">
+
+        <!-- Assigned Truck Section -->
+        <div class="bg-white p-6 rounded-xl shadow mb-8">
+            <h2 class="text-lg font-semibold mb-4">Assigned Truck</h2>
+
+            {% if trucks %}
+                {% set t = trucks[0] %}
+                <div class="border p-4 rounded bg-gray-50">
+                    <p><strong>Truck ID:</strong> {{ t.id }}</p>
+                    <p><strong>Location:</strong> {{ t.location }}</p>
+                    <p><strong>Status:</strong> {{ t.status }}</p>
+                    <p><strong>Last Updated:</strong> {{ t.last_updated }}</p>
+                    <p><strong>Total Load:</strong> {{ t.capacity }} m³</p>
+                </div>
+            {% else %}
+                <p class="text-gray-600">No truck assigned yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Consignment List -->
+        <div class="bg-white p-6 rounded-xl shadow">
+            <h2 class="text-lg font-semibold mb-4">Consignments in Your Truck</h2>
+
+            {% if trucks %}
+                {% set truck = trucks[0] %}
+                {% if truck.consignments %}
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200 text-left">
+                                <th class="p-2 border">ID</th>
+                                <th class="p-2 border">Destination</th>
+                                <th class="p-2 border">Volume</th>
+                                <th class="p-2 border">Status</th>
+                                <th class="p-2 border">Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in truck.consignments %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-2 border text-sm">{{ c.id }}</td>
+                                    <td class="p-2 border">{{ c.destination }}</td>
+                                    <td class="p-2 border">{{ c.volume }}</td>
+                                    <td class="p-2 border">
+                                        <span class="font-medium text-blue-600">{{ c.status }}</span>
+                                    </td>
+
+                                    <!-- Status Update Form -->
+                                    <td class="p-2 border">
+                                        <form action="{{ url_for('driver_update_status', cid=c.id) }}" method="post">
+                                            <select name="status" class="border p-1 rounded">
+                                                <option value="In-Transit">In-Transit</option>
+                                                <option value="Delivered">Delivered</option>
+                                            </select>
+                                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm ml-2">
+                                                Update
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                {% else %}
+                    <p class="text-gray-600">No consignments found in this truck.</p>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-600">Assign a truck to see consignments.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+</body>
+</html>
