@@ -1,0 +1,8 @@
+Flask
+Flask-SQLAlchemy
+SQLAlchemy
+pytz
+bcrypt
+reportlab
+gunicorn
+
