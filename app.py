@@ -8,7 +8,7 @@ import bcrypt
 from functools import wraps
 from sqlalchemy import CheckConstraint
 from sqlalchemy import func
-
+import uuid
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import os
@@ -71,8 +71,9 @@ class Truck(db.Model):
     branch_id = db.Column(db.String(36), db.ForeignKey('branch.id'), nullable=False)
 
 class Branch(db.Model):
-    id = db.Column(db.String(64), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     location = db.Column(db.String(100), nullable=False)
+
 
 class ConsignmentTruck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -841,3 +842,4 @@ def whoami():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
